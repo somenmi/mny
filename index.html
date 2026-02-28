@@ -1,0 +1,2000 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+    <title>MNY / Заметки</title>
+    <link rel="icon" type="image/x-icon" href="https://github.com/somenmi/images/raw/main/MNY/favicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="https://github.com/somenmi/images/raw/main/MNY/favicon.ico">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background-color: #121212;
+            transition: background-color 0.2s ease;
+            background-color: var(--bg-page);
+            color: var(--text-primary);
+            font-family: var(--font-family, system-ui);
+        }
+
+        .theme-dark {
+            --bg-page: #1a1a1a;
+            --bg-container: rgba(33, 33, 33, 0.75);
+            --text-primary: #f0f0f0;
+            --text-secondary: #c0c0c0;
+            --border-light: #424242;
+            --accent-bg: rgba(255, 255, 255, 0.15);
+            --checkbox-bg: #333333;
+            --task-hover: #383838;
+            --btn-bg: #2a2a2a;
+            --green: #2ea043;
+            --green-hover: #3fb950;
+            --icon-color: #f0f0f0;
+            --settings-bg: #252525;
+            --description-bg: #424242;
+            --accent: #ffd000;
+            --border-color: #ffd000;
+            --checkbox-checked: #666666;
+        }
+
+        body.theme-light {
+            --bg-page: #f5f5f5;
+            --bg-container: #ffffff;
+            --text-primary: #1e1e1e;
+            --text-secondary: #4a4a4a;
+            --border-light: #e0e0e0;
+            --accent-bg: #e0e0e0;
+            --checkbox-bg: #f8f8f8;
+            --task-hover: #f0f0f0;
+            --btn-bg: #f0f0f0;
+            --green: #2ea043;
+            --green-hover: #3fb950;
+            --icon-color: #1e1e1e;
+            --settings-bg: #ffffff;
+            --description-bg: #e9e9e9;
+            --accent: #000000;
+            --border-color: #000000;
+            --checkbox-checked: #cccccc;
+        }
+
+        .main-header {
+            width: 100%;
+            max-width: 700px;
+            margin-bottom: 12px;
+            padding: 0 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-left,
+        .header-right {
+            display: flex;
+            gap: 8px;
+        }
+
+        .header-title {
+            font-size: 2.4rem;
+            font-weight: 500;
+            letter-spacing: -0.5px;
+            color: var(--border-color);
+            font-family: var(--font-family, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif);
+            filter: drop-shadow(2.5px 2.5px 0 rgba(var(--border-color-rgb), 0.2));
+        }
+
+        .header-title i {
+            color: var(--border-color);
+        }
+
+        .icon-btn {
+            background: none;
+            border: 2px solid transparent;
+            font-size: 1.8rem;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            color: var(--icon-color);
+            background-color: var(--btn-bg);
+        }
+
+        .icon-btn:hover {
+            border-color: var(--border-color);
+            background-color: rgba(var(--border-color-rgb), 0.2);
+            transform: scale(1.05);
+        }
+
+        .icon-btn i {
+            font-size: 1.8rem;
+        }
+
+        #addTaskBtn {
+            width: 60px;
+        }
+
+        .notes-app {
+            max-width: 700px;
+            width: 100%;
+            background: var(--bg-container);
+            border-bottom-right-radius: 42px;
+            border-bottom-left-radius: 42px;
+            border-top-right-radius: 3px;
+            border-top-left-radius: 3px;
+            padding: 32px;
+            box-shadow: 0 20px 16px rgba(0, 0, 0, 0.3);
+            height: fit-content;
+            transition: background 0.2s;
+            border: 2px solid var(--border-color);
+        }
+
+        .add-task {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+        }
+
+        .add-task input {
+            flex: 1;
+            min-width: 200px;
+            padding: 16px 20px;
+            border: 2px solid var(--border-light);
+            border-radius: 16px;
+            background: var(--checkbox-bg);
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            outline: none;
+            transition: border 0.15s;
+        }
+
+        .add-task input:focus {
+            border-color: var(--border-color);
+        }
+
+        .add-task input::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.7;
+        }
+
+        .add-task button {
+            background: var(--green);
+            border: 2px solid var(--green);
+            color: white;
+            padding: 0 28px;
+            border-radius: 16px;
+            font-size: 2rem;
+            font-weight: 800;
+            line-height: 1;
+            cursor: pointer;
+            transition: 0.2s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(46, 160, 67, 0.3);
+        }
+
+        .add-task button i {
+            font-size: 2rem;
+            font-weight: 400;
+        }
+
+        .add-task button:hover {
+            background: var(--green-hover);
+            border-color: var(--green-hover);
+            transform: scale(1.02);
+            box-shadow: 0 6px 15px rgba(46, 160, 67, 0.4);
+        }
+
+        .task-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .task-item {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            background-color: transparent;
+            border-radius: 23px 23px 0 0;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+
+        .task-item.completed {
+            opacity: 0.6;
+        }
+
+        .task-item:hover {
+            border-color: var(--border-color);
+            background-color: var(--task-hover);
+        }
+
+        .task-main-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid var(--border-light);
+            border-radius: 20px 20px 0 0;
+            background-color: var(--checkbox-bg);
+            word-break: break-word;
+        }
+
+        .task-check {
+            appearance: none;
+            -webkit-appearance: none;
+            min-width: 26px;
+            height: 26px;
+            background-color: var(--bg-container);
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .task-check:checked {
+            background-color: var(--checkbox-checked);
+            border-color: var(--checkbox-checked);
+            box-shadow: inset 0 0 0 4px var(--bg-container);
+        }
+
+        .task-text {
+            flex: 1;
+            font-size: var(--title-font-size, 1.2rem);
+            line-height: 1.5;
+            color: var(--text-primary);
+            transition: color 0.2s, text-decoration 0.2s;
+            white-space: normal;
+            overflow-wrap: break-word;
+            padding: 4px 0;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .task-text.collapsed {
+            -webkit-line-clamp: 1;
+        }
+
+        .task-item.completed .task-text {
+            text-decoration: line-through;
+            text-decoration-color: var(--text-secondary);
+            text-decoration-thickness: 2px;
+            color: var(--text-secondary);
+        }
+
+        .task-description {
+            width: 100%;
+            margin-top: -2px;
+            padding: 4px 18px 14px 18px;
+            background: var(--description-bg);
+            border: 2px solid var(--border-light);
+            border-top: none;
+            font-size: var(--description-font-size, 0.95rem);
+            color: var(--text-secondary);
+            white-space: pre-wrap;
+            word-break: break-word;
+            overflow: hidden;
+            display: block;
+            line-height: 1.3;
+        }
+
+        .task-description.collapsed {
+            max-height: 1.8em;
+        }
+
+        .task-item.completed .task-description {
+            display: none;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 4px;
+            flex-shrink: 0;
+            margin-left: -20px;
+        }
+
+        .edit-btn,
+        .delete-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.4rem;
+            line-height: 1;
+            cursor: pointer;
+            padding: 0 6px;
+            transition: all 0.2s;
+            opacity: 0.5;
+            flex-shrink: 0;
+        }
+
+        .edit-btn:hover {
+            opacity: 1;
+            color: var(--border-color);
+            transform: scale(1.2);
+        }
+
+        .delete-btn {
+            font-size: 1.6rem;
+        }
+
+        .delete-btn:hover {
+            opacity: 1;
+            color: #ff5f5f;
+            transform: rotate(90deg) scale(1.2);
+        }
+
+        .empty-message {
+            text-align: center;
+            color: var(--text-secondary);
+            border: 2px dashed var(--border-light);
+            border-radius: 20px;
+            padding: 30px 20px;
+            font-size: 1.2rem;
+            margin-top: 20px;
+        }
+
+        .edit-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(7px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .edit-modal-overlay.active {
+            display: flex;
+        }
+
+        .edit-modal {
+            background: var(--bg-container);
+            border: 2px solid var(--border-color);
+            border-radius: 32px;
+            padding: 28px;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .edit-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .edit-modal-header h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .close-modal {
+            background: var(--btn-bg);
+            border: 2px solid var(--border-light);
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .close-modal:hover {
+            border-color: #ff4747;
+            color: #ff4747;
+            transform: rotate(90deg);
+        }
+
+        .edit-modal input,
+        .edit-modal textarea {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid var(--border-light);
+            border-radius: 16px;
+            background: var(--checkbox-bg);
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            outline: none;
+            margin-bottom: 16px;
+            font-family: inherit;
+        }
+
+        .edit-modal input:focus,
+        .edit-modal textarea:focus {
+            border-color: var(--border-color);
+        }
+
+        .edit-modal textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .edit-modal-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .edit-modal-buttons button {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 16px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .save-btn {
+            background: var(--green);
+            color: white;
+        }
+
+        .save-btn:hover {
+            background: var(--green-hover);
+            transform: scale(1.02);
+        }
+
+        .cancel-btn {
+            background: var(--btn-bg);
+            color: var(--text-secondary);
+            border: 2px solid var(--border-light);
+        }
+
+        .cancel-btn:hover {
+            border-color: var(--border-color);
+        }
+
+        .settings-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(7px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .settings-overlay.active {
+            display: flex;
+        }
+
+        .settings-panel {
+            background: var(--bg-container);
+            border: 2px dashed var(--border-color);
+            border-radius: 32px;
+            padding: 24px;
+            max-width: 520px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .settings-panel::-webkit-scrollbar {
+            display: none;
+        }
+
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .settings-header h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+
+        .close-settings {
+            background: var(--btn-bg);
+            border: 2px solid var(--border-light);
+            color: var(--text-secondary);
+            font-size: 1.8rem;
+            cursor: pointer;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .close-settings:hover {
+            border-color: #ff4747;
+            color: #ff4747;
+            transform: rotate(90deg);
+        }
+
+        .accordion-item {
+            background: var(--checkbox-bg);
+            border-radius: 24px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-light);
+        }
+
+        .accordion-header {
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .accordion-header h3 {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .accordion-header h3 i {
+            color: var(--border-color);
+            font-size: 1.4rem;
+        }
+
+        .accordion-header i:last-child {
+            color: var(--text-secondary);
+            font-size: 1.4rem;
+            transition: transform 0.3s;
+        }
+
+        .accordion-item.active .accordion-header i:last-child {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            padding: 0 20px;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+            overflow: hidden;
+        }
+
+        .accordion-item.active .accordion-content {
+            max-height: 800px;
+            padding: 0 20px 20px 20px;
+        }
+
+        .settings-section-centered {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .color-picker-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .color-picker-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        #accentColor {
+            width: 62px;
+            height: 62px;
+            border: 0;
+            cursor: pointer;
+            background: transparent;
+            padding: 0;
+        }
+
+        .color-preview {
+            font-family: monospace;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            background: var(--btn-bg);
+            padding: 8px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border-light);
+        }
+
+        .dark-mode-label {
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            padding: 16px 20px;
+            white-space: nowrap;
+            border-left: 4px solid var(--border-color);
+        }
+
+        .dark-mode-label h3 {
+            font-size: 0.8rem;
+            color: var(--border-color);
+        }
+
+        .dark-mode-label p {
+            font-size: 1.25rem;
+            margin: 0;
+            line-height: 1;
+        }
+
+        .dark-mode-label p:first-child {
+            color: var(--border-color);
+            font-weight: 600;
+        }
+
+        .color-palette-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            margin: 16px 0;
+        }
+
+        .color-palette {
+            display: flex;
+            gap: 12px;
+            transition: all 0.3s ease;
+            overflow-x: auto;
+            padding: 5px 5px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            cursor: grab;
+            scroll-behavior: smooth;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .color-palette::-webkit-scrollbar {
+            display: none;
+        }
+
+        .color-palette:active {
+            cursor: grabbing;
+        }
+
+        .color-palette.collapsed {
+            overflow-x: hidden;
+            flex-wrap: nowrap;
+            width: calc(44px * 3 + 26px * 2);
+            justify-content: center;
+            margin-right: -16px;
+        }
+
+        .color-palette.collapsed .color-swatch:nth-child(n+4) {
+            display: none;
+        }
+
+        .color-palette-toggle {
+            background: var(--btn-bg);
+            border: 2px solid var(--border-light);
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            margin-bottom: 8px;
+        }
+
+        .color-palette-toggle:hover {
+            border-color: var(--border-color);
+            background-color: rgba(var(--border-color-rgb), 0.2);
+            transform: scale(1.05);
+        }
+
+        .color-palette-toggle i {
+            font-size: 1.5rem;
+        }
+
+        .color-swatch {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            flex-shrink: 0;
+        }
+
+        .color-swatch:hover {
+            transform: scale(1.1);
+            border-color: var(--text-primary);
+        }
+
+        .color-swatch.active {
+            border-color: var(--text-primary);
+            box-shadow: 0 0 0 2px var(--bg-container);
+        }
+
+        .hex-input-container {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .hex-input-container input {
+            flex: 1;
+            min-width: 100px;
+            padding: 14px 16px;
+            border: 2px solid var(--border-light);
+            border-radius: 16px;
+            background: var(--btn-bg);
+            color: var(--text-primary);
+            font-family: monospace;
+            font-size: 1rem;
+            outline: none;
+            transition: border 0.15s;
+        }
+
+        .hex-input-container input:focus {
+            border-color: var(--border-color);
+        }
+
+        .hex-input-container button {
+            padding: 0 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            background: rgba(var(--border-color-rgb), 0.1);
+            color: var(--text-primary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            min-width: fit-content;
+        }
+
+        .hex-input-container button:hover {
+            background: rgba(var(--border-color-rgb), 0.3);
+        }
+
+        .font-accordion {
+            width: 100%;
+        }
+
+        .add-font-button {
+            width: 100%;
+            padding: 16px;
+            margin-bottom: 16px;
+            background: var(--green);
+            border: 2px solid var(--green);
+            color: white;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .add-font-button i {
+            font-size: 1.4rem;
+        }
+
+        .add-font-button:hover {
+            background: var(--green-hover);
+            border-color: var(--green-hover);
+            transform: scale(1.02);
+        }
+
+        .font-current {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: var(--btn-bg);
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+            border: 1px solid var(--border-light);
+        }
+
+        .font-current:hover {
+            background: var(--task-hover);
+        }
+
+        .font-current .font-preview {
+            flex: 1;
+        }
+
+        .font-current i {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            transition: transform 0.2s;
+        }
+
+        .font-current.active i {
+            transform: rotate(180deg);
+        }
+
+        .font-options {
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 5px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .font-options::-webkit-scrollbar {
+            display: none;
+        }
+
+        .font-options.expanded {
+            display: flex;
+        }
+
+        .font-section-title {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin: 8px 0 4px 8px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .font-option {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: var(--btn-bg);
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+            border: 1px solid var(--border-light);
+        }
+
+        .font-option:hover {
+            background: var(--task-hover);
+        }
+
+        .font-option.selected {
+            background: rgba(var(--border-color-rgb), 0.25);
+            border-color: var(--border-color);
+        }
+
+        .font-option input[type="radio"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            margin: 0;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .font-option input[type="radio"]:checked {
+            background-color: var(--border-color);
+            box-shadow: inset 0 0 0 5px var(--bg-container);
+        }
+
+        .font-preview {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .font-preview .font-name {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .font-preview .sample-text {
+            font-size: 1.2rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .font-size-control {
+            margin-top: 16px;
+            padding: 12px;
+            background: var(--btn-bg);
+            border-radius: 16px;
+            border: 1px solid var(--border-light);
+        }
+
+        .font-size-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            gap: 12px;
+        }
+
+        .font-size-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 90px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
+        .font-size-label i {
+            color: var(--border-color);
+            font-size: 1.2rem;
+        }
+
+        .font-size-slider {
+            flex: 1;
+            height: 6px;
+            -webkit-appearance: none;
+            background: var(--border-light);
+            border-radius: 3px;
+            outline: none;
+        }
+
+        .font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--border-color);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.1s;
+            border: 2px solid var(--bg-container);
+        }
+
+        .font-size-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+
+        .font-size-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: var(--border-color);
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid var(--bg-container);
+        }
+
+        .font-size-value {
+            min-width: 45px;
+            text-align: right;
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 52px;
+            height: 28px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 52px;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--border-light);
+            transition: .3s;
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked+.toggle-slider {
+            background-color: var(--border-color);
+        }
+
+        input:checked+.toggle-slider:before {
+            transform: translateX(24px);
+        }
+
+        .setting-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+        }
+
+        .setting-row span {
+            font-size: 1.1rem;
+            color: var(--text-primary);
+        }
+
+        @media (max-width: 507px) {
+            body {
+                padding: 12px;
+            }
+
+            .main-header {
+                padding: 0 4px;
+            }
+
+            .header-title {
+                font-size: 1.4rem;
+            }
+
+            .notes-app {
+                padding: 18px 16px;
+            }
+
+            .settings-panel {
+                padding: 20px;
+            }
+
+            .color-swatch {
+                width: 38px;
+                height: 38px;
+            }
+
+            .color-palette-toggle {
+                width: 44px;
+                height: 44px;
+            }
+
+            .color-palette.collapsed {
+                width: calc(38px * 3 + 24px * 2);
+            }
+
+            .color-picker-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .color-picker-container {
+                align-self: center;
+            }
+
+            .dark-mode-label {
+                align-self: center;
+                border-left: 0;
+                border-bottom: 3px solid var(--border-color);
+                border-radius: 20px;
+            }
+
+            .dark-mode-label h3 {
+                align-self: center;
+            }
+
+            .dark-mode-label p {
+                align-self: center;
+            }
+
+            .icon-btn {
+                width: 40px;
+                height: 40px;
+            }
+
+            .icon-btn i {
+                font-size: 1.4rem;
+            }
+
+            .font-size-row {
+                flex-wrap: wrap;
+            }
+
+            .font-size-label {
+                min-width: 100%;
+                margin-bottom: 4px;
+            }
+
+            .task-actions {
+                gap: 0;
+                margin-left: -20px;
+            }
+
+            .delete-btn {
+                font-size: 1rem;
+                padding: 0;
+            }
+
+            .edit-btn {
+                font-size: 1.2rem;
+                padding: 0 4px;
+            }
+        }
+    </style>
+</head>
+
+<body class="theme-dark">
+    <div class="main-header">
+        <div class="header-left">
+            <button class="icon-btn" id="themeToggle" title="Сменить тему">
+                <i id="themeIcon" class="ri-sun-fill"></i>
+            </button>
+            <button class="icon-btn" id="settingsToggle" title="Настройки">
+                <i class="ri-settings-3-fill"></i>
+            </button>
+        </div>
+        <span class="header-title" id="headerTitle"><i class="ri-quill-pen-ai-line"></i> заметки</span>
+        <div class="header-right">
+            <button class="icon-btn" id="headerShowDescriptions" title="Показывать описания">
+                <i class="ri-file-text-line"></i>
+            </button>
+            <button class="icon-btn" id="collapseToggle" title="Свернуть всё">
+                <i class="ri-layout-horizontal-line"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="notes-app">
+        <div class="add-task">
+            <input type="text" id="taskInput" placeholder="врайт хир..." autofocus>
+            <button id="addTaskBtn" title="Добавить задачу">
+                <i class="ri-add-fill"></i>
+            </button>
+        </div>
+
+        <ul class="task-list" id="taskList"></ul>
+        <div id="emptyPlaceholder" class="empty-message">ПУСТО</div>
+    </div>
+
+    <div class="edit-modal-overlay" id="editModalOverlay">
+        <div class="edit-modal">
+            <div class="edit-modal-header">
+                <h3>Редактировать задачу</h3>
+                <button class="close-modal" id="closeEditModal"><i class="ri-close-line"></i></button>
+            </div>
+            <input type="text" id="editTitleInput" placeholder="Название задачи">
+            <textarea id="editDescriptionInput" placeholder="Описание задачи (необязательно)"></textarea>
+            <div class="edit-modal-buttons">
+                <button class="cancel-btn" id="cancelEdit">Отмена</button>
+                <button class="save-btn" id="saveEdit">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="settings-overlay" id="settingsOverlay">
+        <div class="settings-panel">
+            <div class="settings-header">
+                <h2>Настройки</h2>
+                <button class="close-settings" id="closeSettings" title="Закрыть">
+                    <i class="ri-close-line"></i>
+                </button>
+            </div>
+
+            <div class="accordion-item">
+                <div class="accordion-header">
+                    <h3><i class="ri-palette-line"></i> Оформление (цвет)</h3>
+                    <i class="ri-arrow-down-s-line"></i>
+                </div>
+                <div class="accordion-content">
+                    <div class="settings-section-centered">
+                        <div class="color-picker-row">
+                            <div class="dark-mode-label">
+                                <h3>Акцентный цвет</h3>
+                                <p>DARK MODE</p>
+                            </div>
+                            <div class="color-picker-container">
+                                <input type="color" id="accentColor" value="#ffd000">
+                                <div class="color-preview" id="colorPreview">#ffd000</div>
+                            </div>
+                        </div>
+
+                        <div class="color-palette-wrapper">
+                            <div class="color-palette collapsed" id="colorPalette">
+                                <div class="color-swatch" style="background-color: #ffd000;" data-color="#ffd000"
+                                    title="#ffd000"></div>
+                                <div class="color-swatch" style="background-color: #ffbf95;" data-color="#ffbf95"
+                                    title="#ffbf95"></div>
+                                <div class="color-swatch" style="background-color: #ff9595;" data-color="#ff9595"
+                                    title="#ff9595"></div>
+                                <div class="color-swatch" style="background-color: #cdff95;" data-color="#cdff95"
+                                    title="#cdff95"></div>
+                                <div class="color-swatch" style="background-color: #95f3ff;" data-color="#95f3ff"
+                                    title="#95f3ff"></div>
+                                <div class="color-swatch" style="background-color: #95aeff;" data-color="#95aeff"
+                                    title="#95aeff"></div>
+                                <div class="color-swatch" style="background-color: #b595ff;" data-color="#b595ff"
+                                    title="#b595ff"></div>
+                                <div class="color-swatch" style="background-color: #ff95f6;" data-color="#ff95f6"
+                                    title="#ff95f6"></div>
+                                <div class="color-swatch" style="background-color: #000000;" data-color="#000000"
+                                    title="#000000"></div>
+                                <div class="color-swatch" style="background-color: #ff0000;" data-color="#ff0000"
+                                    title="#ff0000"></div>
+                                <div class="color-swatch" style="background-color: #ffee00;" data-color="#ffee00"
+                                    title="#ffee00"></div>
+                                <div class="color-swatch" style="background-color: #00ff00;" data-color="#00ff00"
+                                    title="#00ff00"></div>
+                                <div class="color-swatch" style="background-color: #00ffff;" data-color="#00ffff"
+                                    title="#00ffff"></div>
+                                <div class="color-swatch" style="background-color: #0066ff;" data-color="#0066ff"
+                                    title="#0066ff"></div>
+                                <div class="color-swatch" style="background-color: #1100ff;" data-color="#1100ff"
+                                    title="#1100ff"></div>
+                                <div class="color-swatch" style="background-color: #8400ff;" data-color="#8400ff"
+                                    title="#8400ff"></div>
+                                <div class="color-swatch" style="background-color: #f700ff;" data-color="#f700ff"
+                                    title="#f700ff"></div>
+                                <div class="color-swatch" style="background-color: #ff0080;" data-color="#ff0080"
+                                    title="#ff0080"></div>
+                            </div>
+                            <button class="color-palette-toggle" id="colorPaletteToggle" title="Показать все цвета">
+                                <i class="ri-skip-right-line"></i>
+                            </button>
+                        </div>
+
+                        <div class="hex-input-container">
+                            <input type="text" id="hexInput" placeholder="#ffd000" maxlength="7" value="#ffd000">
+                            <button id="applyHexBtn">Применить</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <div class="accordion-header">
+                    <h3><i class="ri-font-size"></i> Шрифт</h3>
+                    <i class="ri-arrow-down-s-line"></i>
+                </div>
+                <div class="accordion-content">
+                    <div class="font-accordion" id="fontAccordion">
+                        <button class="add-font-button" id="addFontBtn">
+                            <i class="ri-add-line"></i>Добавить новый шрифт
+                        </button>
+                        <input type="file" id="fontUpload" accept=".ttf,.otf,.woff,.woff2" style="display: none;">
+
+                        <div class="font-current" id="fontCurrent">
+                            <div class="font-preview">
+                                <div class="font-name">Текущий шрифт</div>
+                                <div class="sample-text" id="currentFontSample">Заметки ✏️</div>
+                            </div>
+                            <i class="ri-layout-top-2-line"></i>
+                        </div>
+
+                        <div class="font-options" id="fontOptions">
+                        </div>
+
+                        <!-- Регуляторы размера шрифта -->
+                        <div class="font-size-control">
+                            <div class="font-size-row">
+                                <span class="font-size-label">
+                                    <i class="ri-heading"></i> Заголовок
+                                </span>
+                                <input type="range" class="font-size-slider" id="titleFontSize" min="10" max="32"
+                                    value="19" step="1">
+                                <span class="font-size-value" id="titleFontSizeValue">19px</span>
+                            </div>
+                            <div class="font-size-row">
+                                <span class="font-size-label">
+                                    <i class="ri-file-text-line"></i> Описание
+                                </span>
+                                <input type="range" class="font-size-slider" id="descriptionFontSize" min="8" max="28"
+                                    value="15" step="1">
+                                <span class="font-size-value" id="descriptionFontSizeValue">15px</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <div class="accordion-header">
+                    <h3><i class="ri-information-line"></i> О приложении</h3>
+                    <i class="ri-arrow-down-s-line"></i>
+                </div>
+                <div class="accordion-content">
+                    <p style="color: var(--text-secondary); line-height: 1.6; text-align: center;">
+                        Версия 1.2.0<br>
+                        Минималистичные заметки с поддержкой своих шрифтов<br>
+                        и регулировкой размера текста
+                    </p>
+                </div>
+            </div>
+
+            <div class="setting-row"
+                style="margin-top: 16px; padding-top: 16px; border-top: 2px solid var(--border-light);">
+                <span>Показывать описания задач</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="showDescriptions" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono&family=Caveat:wght@400;500&family=Montserrat:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <script>
+        (function () {
+            const body = document.body;
+            const themeToggleBtn = document.getElementById('themeToggle');
+            const themeIcon = document.getElementById('themeIcon');
+            const collapseBtn = document.getElementById('collapseToggle');
+            const collapseIcon = collapseBtn.querySelector('i');
+            const settingsToggle = document.getElementById('settingsToggle');
+            const settingsOverlay = document.getElementById('settingsOverlay');
+            const closeSettings = document.getElementById('closeSettings');
+            const accentColorInput = document.getElementById('accentColor');
+            const colorPreview = document.getElementById('colorPreview');
+            const hexInput = document.getElementById('hexInput');
+            const applyHexBtn = document.getElementById('applyHexBtn');
+            const colorSwatches = document.querySelectorAll('.color-swatch');
+
+            const addFontBtn = document.getElementById('addFontBtn');
+            const fontUpload = document.getElementById('fontUpload');
+            const fontCurrent = document.getElementById('fontCurrent');
+            const fontOptionsContainer = document.getElementById('fontOptions');
+            const currentFontSample = document.getElementById('currentFontSample');
+            const headerTitle = document.getElementById('headerTitle');
+
+            const titleFontSizeSlider = document.getElementById('titleFontSize');
+            const titleFontSizeValue = document.getElementById('titleFontSizeValue');
+            const descriptionFontSizeSlider = document.getElementById('descriptionFontSize');
+            const descriptionFontSizeValue = document.getElementById('descriptionFontSizeValue');
+
+            const taskInput = document.getElementById('taskInput');
+            const addBtn = document.getElementById('addTaskBtn');
+            const taskListEl = document.getElementById('taskList');
+            const emptyPlaceholder = document.getElementById('emptyPlaceholder');
+
+            const editModalOverlay = document.getElementById('editModalOverlay');
+            const closeEditModalBtn = document.getElementById('closeEditModal');
+            const cancelEditBtn = document.getElementById('cancelEdit');
+            const saveEditBtn = document.getElementById('saveEdit');
+            const editTitleInput = document.getElementById('editTitleInput');
+            const editDescriptionInput = document.getElementById('editDescriptionInput');
+
+            const showDescriptionsToggle = document.getElementById('showDescriptions');
+
+            const headerShowDescriptionsBtn = document.getElementById('headerShowDescriptions');
+            const headerShowDescriptionsIcon = headerShowDescriptionsBtn.querySelector('i');
+
+            let tasks = [];
+            let isCollapsed = false;
+            let currentEditIndex = null;
+            let customFonts = [];
+
+            function hexToRgb(hex) {
+                const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? {
+                    r: parseInt(result[1], 16),
+                    g: parseInt(result[2], 16),
+                    b: parseInt(result[3], 16)
+                } : null;
+            }
+
+            function setBorderColorRgb(color) {
+                const rgb = hexToRgb(color);
+                if (rgb) {
+                    body.style.setProperty('--border-color-rgb', `${rgb.r}, ${rgb.g}, ${rgb.b}`);
+                }
+            }
+
+            function setTitleFontSize(size) {
+                body.style.setProperty('--title-font-size', size + 'px');
+                localStorage.setItem('titleFontSize', size);
+                if (titleFontSizeSlider) titleFontSizeSlider.value = size;
+                if (titleFontSizeValue) titleFontSizeValue.textContent = size + 'px';
+            }
+
+            function setDescriptionFontSize(size) {
+                body.style.setProperty('--description-font-size', size + 'px');
+                localStorage.setItem('descriptionFontSize', size);
+                if (descriptionFontSizeSlider) descriptionFontSizeSlider.value = size;
+                if (descriptionFontSizeValue) descriptionFontSizeValue.textContent = size + 'px';
+            }
+
+            const savedTitleSize = localStorage.getItem('titleFontSize') || '19';
+            const savedDescriptionSize = localStorage.getItem('descriptionFontSize') || '15';
+            setTitleFontSize(savedTitleSize);
+            setDescriptionFontSize(savedDescriptionSize);
+
+            if (titleFontSizeSlider) {
+                titleFontSizeSlider.addEventListener('input', (e) => {
+                    setTitleFontSize(e.target.value);
+                });
+            }
+
+            if (descriptionFontSizeSlider) {
+                descriptionFontSizeSlider.addEventListener('input', (e) => {
+                    setDescriptionFontSize(e.target.value);
+                });
+            }
+
+            function loadCustomFonts() {
+                const stored = localStorage.getItem('customFonts');
+                if (stored) {
+                    try {
+                        customFonts = JSON.parse(stored);
+                        customFonts.forEach(font => {
+                            const style = document.createElement('style');
+                            style.textContent = `
+                                @font-face {
+                                    font-family: '${font.family}';
+                                    src: url(${font.data});
+                                    font-display: swap;
+                                }
+                            `;
+                            document.head.appendChild(style);
+                        });
+                    } catch (e) {
+                        customFonts = [];
+                    }
+                }
+            }
+
+            function saveCustomFonts() {
+                localStorage.setItem('customFonts', JSON.stringify(customFonts));
+            }
+
+            function uploadFont(file) {
+                const isDuplicate = customFonts.some(font => font.name === file.name);
+
+                if (isDuplicate) {
+                    alert('Этот шрифт уже был загружен!');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const fontData = e.target.result;
+                    const fontFamily = `custom-${file.name.replace(/\.[^/.]+$/, "").replace(/[^a-zA-Z0-9]/g, '-')}`;
+
+                    const style = document.createElement('style');
+                    style.textContent = `
+                        @font-face {
+                            font-family: '${fontFamily}';
+                            src: url(${fontData});
+                            font-display: swap;
+                        }
+                    `;
+                    document.head.appendChild(style);
+
+                    customFonts.push({
+                        family: fontFamily,
+                        name: file.name,
+                        data: fontData
+                    });
+
+                    saveCustomFonts();
+                    renderFontOptions();
+                    setFont(fontFamily);
+                };
+                reader.readAsDataURL(file);
+            }
+
+            function renderFontOptions() {
+                const savedFont = localStorage.getItem('noteFont');
+
+                let html = '';
+
+                if (customFonts.length > 0) {
+                    html += '<div class="font-section-title">ПОЛЬЗОВАТЕЛЬСКИЕ</div>';
+                    customFonts.forEach((font, index) => {
+                        const isSelected = savedFont === font.family;
+                        html += `
+                            <div class="font-option ${isSelected ? 'selected' : ''}" data-font="${font.family}" data-custom="true">
+                                <input type="radio" name="font" value="${font.family}" ${isSelected ? 'checked' : ''}>
+                                <div class="font-preview">
+                                    <div class="font-name">${font.name}</div>
+                                    <div class="sample-text" style="font-family: ${font.family}">Заметки ✏️</div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+
+                html += '<div class="font-section-title">СИСТЕМНЫЕ</div>';
+
+                const systemFonts = [
+                    { family: 'system-ui', name: 'Системный шрифт' },
+                    { family: "'Inter', sans-serif", name: 'Inter' },
+                    { family: "'JetBrains Mono', monospace", name: 'JetBrains Mono' },
+                    { family: "'Caveat', cursive", name: 'Caveat' },
+                    { family: "'Montserrat', sans-serif", name: 'Montserrat' }
+                ];
+
+                systemFonts.forEach(font => {
+                    const isSelected = savedFont === font.family;
+                    html += `
+                        <div class="font-option ${isSelected ? 'selected' : ''}" data-font="${font.family}">
+                            <input type="radio" name="font" value="${font.family}" ${isSelected ? 'checked' : ''}>
+                            <div class="font-preview">
+                                <div class="font-name">${font.name}</div>
+                                <div class="sample-text" style="font-family: ${font.family}">Заметки ✏️</div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                fontOptionsContainer.innerHTML = html;
+
+                document.querySelectorAll('.font-option').forEach(option => {
+                    option.addEventListener('click', () => {
+                        const font = option.dataset.font;
+                        setFont(font);
+                        fontOptionsContainer.classList.remove('expanded');
+                        fontCurrent.classList.remove('active');
+                    });
+                });
+            }
+
+            const accordionItems = document.querySelectorAll('.accordion-item');
+            accordionItems.forEach(item => {
+                const header = item.querySelector('.accordion-header');
+                header.addEventListener('click', () => {
+                    item.classList.toggle('active');
+                });
+            });
+
+            let showDescriptions = localStorage.getItem('showDescriptions') !== 'false';
+
+            if (showDescriptionsToggle) {
+                showDescriptionsToggle.checked = showDescriptions;
+                showDescriptionsToggle.addEventListener('change', (e) => {
+                    showDescriptions = e.target.checked;
+                    localStorage.setItem('showDescriptions', showDescriptions);
+                    renderTasks();
+                    updateHeaderDescriptionIcon();
+                });
+            }
+
+            function applyAccentColor(color) {
+                if (body.classList.contains('theme-dark')) {
+                    body.style.setProperty('--accent', color);
+                    body.style.setProperty('--border-color', color);
+                }
+
+                setBorderColorRgb(color);
+
+                accentColorInput.value = color;
+                colorPreview.textContent = color;
+                hexInput.value = color;
+
+                colorSwatches.forEach(swatch => {
+                    const swatchColor = swatch.dataset.color;
+                    if (swatchColor && swatchColor.toLowerCase() === color.toLowerCase()) {
+                        swatch.classList.add('active');
+                    } else {
+                        swatch.classList.remove('active');
+                    }
+                });
+
+                localStorage.setItem('noteAccentColor', color);
+            }
+
+            const savedColor = localStorage.getItem('noteAccentColor') || '#ffd000';
+            applyAccentColor(savedColor);
+
+            accentColorInput.addEventListener('input', (e) => applyAccentColor(e.target.value));
+
+            function applyHexColor() {
+                let hex = hexInput.value.trim();
+                const hexPattern = /^#?[0-9A-Fa-f]{6}$/;
+                let cleanHex = hex.startsWith('#') ? hex : '#' + hex;
+                if (hexPattern.test(cleanHex)) {
+                    applyAccentColor(cleanHex.toUpperCase());
+                } else if (hexPattern.test('#' + hex)) {
+                    applyAccentColor('#' + hex.toUpperCase());
+                } else {
+                    alert('Введите корректный HEX-код');
+                    hexInput.value = localStorage.getItem('noteAccentColor') || '#ffd000';
+                }
+            }
+
+            applyHexBtn.addEventListener('click', applyHexColor);
+            hexInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') applyHexColor(); });
+
+            colorSwatches.forEach(swatch => {
+                swatch.addEventListener('click', () => {
+                    const color = swatch.dataset.color;
+                    if (color) applyAccentColor(color);
+                });
+            });
+
+            function setTheme(theme) {
+                if (theme === 'light') {
+                    body.classList.remove('theme-dark');
+                    body.classList.add('theme-light');
+                    themeIcon.className = 'ri-moon-fill';
+                    body.style.setProperty('--accent', '#000000');
+                    body.style.setProperty('--border-color', '#000000');
+                    setBorderColorRgb('#000000');
+                    body.style.setProperty('--checkbox-checked', '#cccccc');
+                } else {
+                    body.classList.remove('theme-light');
+                    body.classList.add('theme-dark');
+                    themeIcon.className = 'ri-sun-fill';
+                    const savedColor = localStorage.getItem('noteAccentColor') || '#ffd000';
+                    applyAccentColor(savedColor);
+                    body.style.setProperty('--checkbox-checked', '#666666');
+                }
+                localStorage.setItem('noteTheme', theme);
+            }
+
+            function updateHeaderDescriptionIcon() {
+                if (headerShowDescriptionsIcon) {
+                    if (showDescriptions) {
+                        headerShowDescriptionsIcon.className = 'ri-file-text-fill';
+                        headerShowDescriptionsBtn.title = 'Скрыть описания';
+                    } else {
+                        headerShowDescriptionsIcon.className = 'ri-file-text-line';
+                        headerShowDescriptionsBtn.title = 'Показать описания';
+                    }
+                }
+            }
+
+            const savedTheme = localStorage.getItem('noteTheme') || 'dark';
+            setTheme(savedTheme);
+
+            themeToggleBtn.addEventListener('click', () => {
+                const isDark = body.classList.contains('theme-dark');
+                setTheme(isDark ? 'light' : 'dark');
+            });
+
+            settingsToggle.addEventListener('click', () => settingsOverlay.classList.add('active'));
+
+            function closeSettingsPanel() {
+                settingsOverlay.classList.remove('active');
+            }
+
+            closeSettings.addEventListener('click', closeSettingsPanel);
+            settingsOverlay.addEventListener('click', (e) => {
+                if (e.target === settingsOverlay) closeSettingsPanel();
+            });
+
+            function setFont(fontFamily) {
+                body.style.setProperty('--font-family', fontFamily);
+                body.style.fontFamily = fontFamily;
+                headerTitle.style.fontFamily = fontFamily;
+                taskInput.style.fontFamily = fontFamily;
+                currentFontSample.style.fontFamily = fontFamily;
+                currentFontSample.textContent = 'Заметки ✏️';
+
+                let fontName = 'Системный шрифт';
+                const customFont = customFonts.find(f => f.family === fontFamily);
+                if (customFont) {
+                    fontName = customFont.name;
+                } else {
+                    const fontMap = {
+                        'system-ui': 'Системный шрифт',
+                        "'Inter', sans-serif": 'Inter',
+                        "'JetBrains Mono', monospace": 'JetBrains Mono',
+                        "'Caveat', cursive": 'Caveat',
+                        "'Montserrat', sans-serif": 'Montserrat'
+                    };
+                    fontName = fontMap[fontFamily] || fontFamily;
+                }
+
+                const currentFontName = fontCurrent.querySelector('.font-name');
+                if (currentFontName) currentFontName.textContent = fontName;
+
+                document.querySelectorAll('.font-option').forEach(option => {
+                    if (option.dataset.font === fontFamily) {
+                        option.classList.add('selected');
+                        option.querySelector('input[type="radio"]').checked = true;
+                    } else {
+                        option.classList.remove('selected');
+                        const radio = option.querySelector('input[type="radio"]');
+                        if (radio) radio.checked = false;
+                    }
+                });
+
+                localStorage.setItem('noteFont', fontFamily);
+            }
+
+            loadCustomFonts();
+            renderFontOptions();
+
+            const savedFont = localStorage.getItem('noteFont');
+            if (savedFont) setFont(savedFont);
+
+            addFontBtn.addEventListener('click', () => {
+                fontUpload.click();
+            });
+
+            fontUpload.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    uploadFont(file);
+                }
+                fontUpload.value = '';
+            });
+
+            fontCurrent.addEventListener('click', () => {
+                fontOptionsContainer.classList.toggle('expanded');
+                fontCurrent.classList.toggle('active');
+            });
+
+            function loadTasks() {
+                const stored = localStorage.getItem('noteTasks');
+                if (stored) {
+                    try { tasks = JSON.parse(stored); } catch (e) { tasks = []; }
+                } else {
+                    tasks = [
+                        { text: 'послушать одного ноунейма', description: 'звать в интернетике AWALORES - говорят хайп', completed: false },
+                        { text: 'купить газяву', description: 'добрую колу или колокольчик', completed: true },
+                        { text: 'продолжить в описании счёт', description: 'ноль, один, два, три, четыре, пять, шесть, семь, восемь, девять, десять, одиннадцать, двенадцать, тринадцать, четырнадцать, пятнадцать, шестнадцать, семнадцать, восемнадцать, девятнадцать, двадцать, двадцать один, двадцать два, двадцать три, двадцать четыре, двадцать пять, двадцать шесть, двадцать семь, двадцать восемь, двадцать девять, тридцать.', completed: false }
+                    ];
+                }
+                renderTasks();
+            }
+
+            function saveTasks() { localStorage.setItem('noteTasks', JSON.stringify(tasks)); }
+
+            function renderTasks() {
+                taskListEl.innerHTML = '';
+                emptyPlaceholder.style.display = tasks.length === 0 ? 'block' : 'none';
+
+                tasks.forEach((task, index) => {
+                    const li = document.createElement('li');
+                    li.className = `task-item ${task.completed ? 'completed' : ''}`;
+                    li.dataset.index = index;
+
+                    const mainRow = document.createElement('div');
+                    mainRow.className = 'task-main-row';
+
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.className = 'task-check';
+                    checkbox.checked = task.completed;
+                    checkbox.addEventListener('change', () => toggleCompleted(index));
+
+                    const textSpan = document.createElement('span');
+                    textSpan.className = 'task-text';
+                    if (isCollapsed) textSpan.classList.add('collapsed');
+                    textSpan.textContent = task.text;
+
+                    const actionsDiv = document.createElement('div');
+                    actionsDiv.className = 'task-actions';
+
+                    const editBtn = document.createElement('button');
+                    editBtn.className = 'edit-btn';
+                    editBtn.innerHTML = '<i class="ri-edit-2-fill"></i>';
+                    editBtn.setAttribute('aria-label', 'Редактировать');
+                    editBtn.setAttribute('title', 'Редактировать задачу');
+                    editBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        openEditModal(index);
+                    });
+
+                    const delBtn = document.createElement('button');
+                    delBtn.className = 'delete-btn';
+                    delBtn.innerHTML = '<i class="ri-close-line"></i>';
+                    delBtn.setAttribute('aria-label', 'Удалить');
+                    delBtn.setAttribute('title', 'Удалить задачу');
+                    delBtn.addEventListener('click', () => deleteTask(index));
+
+                    actionsDiv.appendChild(editBtn);
+                    actionsDiv.appendChild(delBtn);
+
+                    mainRow.appendChild(checkbox);
+                    mainRow.appendChild(textSpan);
+                    mainRow.appendChild(actionsDiv);
+
+                    li.appendChild(mainRow);
+
+                    if (task.description && showDescriptions && !task.completed) {
+                        const descDiv = document.createElement('div');
+                        descDiv.className = 'task-description';
+                        if (isCollapsed) descDiv.classList.add('collapsed');
+                        descDiv.textContent = task.description;
+                        li.appendChild(descDiv);
+                    }
+
+                    taskListEl.appendChild(li);
+                });
+
+                collapseIcon.className = isCollapsed ? 'ri-layout-top-2-line' : 'ri-layout-horizontal-line';
+                collapseBtn.setAttribute('title', isCollapsed ? 'Развернуть всё' : 'Свернуть всё');
+            }
+
+            function toggleCompleted(index) {
+                if (tasks[index]) {
+                    tasks[index].completed = !tasks[index].completed;
+                    saveTasks();
+                    renderTasks();
+                }
+            }
+
+            function deleteTask(index) {
+                if (tasks[index]) {
+                    tasks.splice(index, 1);
+                    saveTasks();
+                    renderTasks();
+                }
+            }
+
+            function addNewTask() {
+                const text = taskInput.value.trim();
+                if (text === '') { alert('напишите хоть что-то, вы чё...'); return; }
+                tasks.push({ text: text, description: '', completed: false });
+                saveTasks();
+                renderTasks();
+                taskInput.value = '';
+                taskInput.focus();
+            }
+
+            function toggleCollapse() {
+                isCollapsed = !isCollapsed;
+                renderTasks();
+                localStorage.setItem('noteCollapsed', isCollapsed);
+            }
+
+            function openEditModal(index) {
+                currentEditIndex = index;
+                const task = tasks[index];
+                editTitleInput.value = task.text || '';
+                editDescriptionInput.value = task.description || '';
+                editModalOverlay.classList.add('active');
+            }
+
+            function closeEditModalHandler() {
+                editModalOverlay.classList.remove('active');
+                currentEditIndex = null;
+            }
+
+            function saveEditHandler() {
+                if (currentEditIndex !== null && tasks[currentEditIndex]) {
+                    tasks[currentEditIndex].text = editTitleInput.value.trim() || 'Без названия';
+                    tasks[currentEditIndex].description = editDescriptionInput.value.trim();
+                    saveTasks();
+                    renderTasks();
+                    closeEditModalHandler();
+                }
+            }
+
+            closeEditModalBtn.addEventListener('click', closeEditModalHandler);
+            cancelEditBtn.addEventListener('click', closeEditModalHandler);
+            saveEditBtn.addEventListener('click', saveEditHandler);
+            editModalOverlay.addEventListener('click', (e) => {
+                if (e.target === editModalOverlay) closeEditModalHandler();
+            });
+
+            editTitleInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    saveEditHandler();
+                }
+            });
+
+            const savedCollapsed = localStorage.getItem('noteCollapsed');
+            if (savedCollapsed !== null) isCollapsed = savedCollapsed === 'true';
+
+            collapseBtn.addEventListener('click', toggleCollapse);
+            headerShowDescriptionsBtn.addEventListener('click', () => {
+                showDescriptions = !showDescriptions;
+                localStorage.setItem('showDescriptions', showDescriptions);
+                if (showDescriptionsToggle) {
+                    showDescriptionsToggle.checked = showDescriptions;
+                }
+                renderTasks();
+                updateHeaderDescriptionIcon();
+            });
+            addBtn.addEventListener('click', addNewTask);
+            taskInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addNewTask(); });
+
+            loadTasks();
+            updateHeaderDescriptionIcon();
+
+            const colorPalette = document.getElementById('colorPalette');
+            const paletteToggle = document.getElementById('colorPaletteToggle');
+
+            if (colorPalette && paletteToggle) {
+                const isPaletteExpanded = localStorage.getItem('colorPaletteExpanded') === 'true';
+
+                if (isPaletteExpanded) {
+                    colorPalette.classList.remove('collapsed');
+                    paletteToggle.innerHTML = '<i class="ri-skip-left-line"></i>';
+                    paletteToggle.title = 'Свернуть палитру';
+                } else {
+                    colorPalette.classList.add('collapsed');
+                    paletteToggle.innerHTML = '<i class="ri-skip-right-line"></i>';
+                    paletteToggle.title = 'Развернуть палитру';
+                }
+
+                paletteToggle.addEventListener('click', () => {
+                    const isCollapsed = colorPalette.classList.contains('collapsed');
+
+                    if (isCollapsed) {
+                        colorPalette.classList.remove('collapsed');
+                        paletteToggle.innerHTML = '<i class="ri-skip-left-line"></i>';
+                        paletteToggle.title = 'Свернуть палитру';
+                        localStorage.setItem('colorPaletteExpanded', 'true');
+                    } else {
+                        colorPalette.classList.add('collapsed');
+                        paletteToggle.innerHTML = '<i class="ri-skip-right-line"></i>';
+                        paletteToggle.title = 'Развернуть палитру';
+                        localStorage.setItem('colorPaletteExpanded', 'false');
+                    }
+                });
+
+                colorPalette.addEventListener('wheel', (e) => {
+                    e.preventDefault();
+                    colorPalette.scrollLeft += e.deltaY;
+                });
+            }
+        })();
+    </script>
+</body>
+
+</html>
