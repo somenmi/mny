@@ -126,6 +126,11 @@
             font-size: 1.8rem;
         }
 
+        .hub-btn img {
+            width: 28px;
+            height: 28px;
+        }
+
         #addTaskBtn {
             width: 60px;
         }
@@ -1154,6 +1159,11 @@
                 font-size: 1.4rem;
             }
 
+            .hub-btn img {
+                width: 22px;
+                height: 22px;
+            }
+
             .font-size-row {
                 flex-wrap: wrap;
             }
@@ -1184,12 +1194,14 @@
 <body class="theme-dark">
     <div class="main-header">
         <div class="header-left">
-            <button class="icon-btn" id="themeToggle" title="Сменить тему">
-                <i id="themeIcon" class="ri-sun-fill"></i>
-            </button>
             <button class="icon-btn" id="settingsToggle" title="Настройки">
                 <i class="ri-settings-3-fill"></i>
             </button>
+            <a href="https://somenmi.github.io/hub_nity/" class="icon-btn hub-btn" title="Yalkee Hub"
+                style="display: inline-flex;">
+                <img src="https://raw.githubusercontent.com/somenmi/images/main/hub_nity/logo.png" alt="Hub"
+                    style="filter: saturate(0) brightness(2);">
+            </a>
         </div>
         <span class="header-title" id="headerTitle"><i class="ri-quill-pen-ai-line"></i> заметки</span>
         <div class="header-right">
@@ -1361,9 +1373,9 @@
                 </div>
                 <div class="accordion-content">
                     <p style="color: var(--text-secondary); line-height: 1.6; text-align: center;">
-                        Версия 1.2.0<br>
-                        Минималистичные заметки с поддержкой своих шрифтов<br>
-                        и регулировкой размера текста
+                        Версия 1.2.1<br>
+                        Минималистичные заметки<br>
+                        с поддержкой своих шрифтов
                     </p>
                 </div>
             </div>
@@ -1373,6 +1385,14 @@
                 <span>Показывать описания задач</span>
                 <label class="toggle-switch">
                     <input type="checkbox" id="showDescriptions" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+
+            <div class="setting-row" style="border-top: 2px solid var(--border-light);">
+                <span>Тёмная тема</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="themeToggleNew">
                     <span class="toggle-slider"></span>
                 </label>
             </div>
@@ -1386,8 +1406,7 @@
     <script>
         (function () {
             const body = document.body;
-            const themeToggleBtn = document.getElementById('themeToggle');
-            const themeIcon = document.getElementById('themeIcon');
+            const themeToggleNew = document.getElementById('themeToggleNew');
             const collapseBtn = document.getElementById('collapseToggle');
             const collapseIcon = collapseBtn.querySelector('i');
             const settingsToggle = document.getElementById('settingsToggle');
@@ -1675,7 +1694,6 @@
                 if (theme === 'light') {
                     body.classList.remove('theme-dark');
                     body.classList.add('theme-light');
-                    themeIcon.className = 'ri-moon-fill';
                     body.style.setProperty('--accent', '#000000');
                     body.style.setProperty('--border-color', '#000000');
                     setBorderColorRgb('#000000');
@@ -1683,12 +1701,16 @@
                 } else {
                     body.classList.remove('theme-light');
                     body.classList.add('theme-dark');
-                    themeIcon.className = 'ri-sun-fill';
                     const savedColor = localStorage.getItem('noteAccentColor') || '#ffd000';
                     applyAccentColor(savedColor);
                     body.style.setProperty('--checkbox-checked', '#666666');
                 }
                 localStorage.setItem('noteTheme', theme);
+
+                // Синхронизируем положение нового переключателя
+                if (themeToggleNew) {
+                    themeToggleNew.checked = (theme === 'dark');
+                }
             }
 
             function updateHeaderDescriptionIcon() {
@@ -1706,10 +1728,12 @@
             const savedTheme = localStorage.getItem('noteTheme') || 'dark';
             setTheme(savedTheme);
 
-            themeToggleBtn.addEventListener('click', () => {
-                const isDark = body.classList.contains('theme-dark');
-                setTheme(isDark ? 'light' : 'dark');
-            });
+            if (themeToggleNew) {
+                themeToggleNew.addEventListener('change', function () {
+                    const newTheme = this.checked ? 'dark' : 'light';
+                    setTheme(newTheme);
+                });
+            }
 
             settingsToggle.addEventListener('click', () => settingsOverlay.classList.add('active'));
 

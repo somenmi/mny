@@ -14,7 +14,7 @@
 
 [![Web App](https://shields.io/badge/WEB-APP-red.svg)](https://somenmi.github.io/mny/)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
-![Version](https://img.shields.io/badge/version-1.2.0-blue.svg)
+![Version](https://img.shields.io/badge/version-1.2.1-blue.svg)
 
 </div>
 
@@ -54,6 +54,9 @@
     × Сохранение всех новых настроек
     × Улучшенная адаптация под мобилки
     × Добавлен favicon
+
+    × v1.2.1 : Иконка перехода в Yalkee HUB
+        ↪︎ Тёмная/Светлая тема перенесена в меню "Настройки" (вместо иконки темы, теперь HUB)
 
 ## 🛠 Использование
 
