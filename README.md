@@ -14,7 +14,7 @@
 
 [![Web App](https://shields.io/badge/WEB-APP-red.svg)](https://somenmi.github.io/mny/)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
-![Version](https://img.shields.io/badge/version-1.2.1-blue.svg)
+![Version](https://img.shields.io/badge/version-1.2.2-blue.svg)
 
 </div>
 
@@ -57,6 +57,9 @@
 
     × v1.2.1 : Иконка перехода в Yalkee HUB
         ↪︎ Тёмная/Светлая тема перенесена в меню "Настройки" (вместо иконки темы, теперь HUB)
+
+    × v1.2.2 : Сортировка
+        ↪︎ Новая возможность: Настройки > Сортировка (А-Я; Я-А; ВЫКЛ)
 
 ## 🛠 Использование
 

@@ -561,10 +561,58 @@
             transform: rotate(90deg);
         }
 
+        /* Новая кнопка сортировки */
+        .settings-sort-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            margin-bottom: 8px;
+            border-bottom: 2px solid var(--border-light);
+        }
+
+        .settings-sort-row span {
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .settings-sort-row span i {
+            color: var(--border-color);
+            font-size: 1.3rem;
+        }
+
+        .sort-toggle-btn {
+            background: var(--btn-bg);
+            border: 2px solid var(--border-light);
+            border-radius: 16px;
+            padding: 8px 10px 8px 14px;
+            gap: 12px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            justify-content: center;
+        }
+
+        .sort-toggle-btn:hover {
+            border-color: var(--border-color);
+            background-color: rgba(var(--border-color-rgb), 0.1);
+        }
+
+        .sort-toggle-btn i {
+            font-size: 1.3rem;
+        }
+
         .accordion-item {
             background: var(--checkbox-bg);
             border-radius: 24px;
             margin-bottom: 12px;
+            margin-top: 16px;
             overflow: hidden;
             border: 1px solid var(--border-light);
         }
@@ -1250,6 +1298,14 @@
                 </button>
             </div>
 
+            <div class="settings-sort-row">
+                <span><i class="ri-sort-alphabet-asc"></i> Сортировка</span>
+                <button class="sort-toggle-btn" id="sortToggleBtn" title="Изменить режим сортировки">
+                    <span id="sortModeText"></span>
+                    <i class="ri-close-large-fill"></i>
+                </button>
+            </div>
+
             <div class="accordion-item">
                 <div class="accordion-header">
                     <h3><i class="ri-palette-line"></i> Оформление (цвет)</h3>
@@ -1373,7 +1429,7 @@
                 </div>
                 <div class="accordion-content">
                     <p style="color: var(--text-secondary); line-height: 1.6; text-align: center;">
-                        Версия 1.2.1<br>
+                        Версия 1.2.2<br>
                         Минималистичные заметки<br>
                         с поддержкой своих шрифтов
                     </p>
@@ -1447,10 +1503,18 @@
             const headerShowDescriptionsBtn = document.getElementById('headerShowDescriptions');
             const headerShowDescriptionsIcon = headerShowDescriptionsBtn.querySelector('i');
 
+            // Новая кнопка сортировки
+            const sortToggleBtn = document.getElementById('sortToggleBtn');
+            const sortModeText = document.getElementById('sortModeText');
+            const sortIcon = sortToggleBtn.querySelector('i');
+
             let tasks = [];
             let isCollapsed = false;
             let currentEditIndex = null;
             let customFonts = [];
+
+            // Состояние сортировки: 0 - отключено, 1 - по возрастанию, 2 - по убыванию
+            let sortMode = parseInt(localStorage.getItem('noteSortMode')) || 0;
 
             function hexToRgb(hex) {
                 const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -1809,6 +1873,62 @@
                 fontCurrent.classList.toggle('active');
             });
 
+            // Функция для применения сортировки к массиву задач
+            function applySortToTasks(tasksArray) {
+                if (sortMode === 0) return tasksArray; // Без сортировки
+
+                // Создаем копию для сортировки
+                const sortedTasks = [...tasksArray];
+
+                // Сортируем с учетом символов (Unicode-коды)
+                sortedTasks.sort((a, b) => {
+                    const textA = a.text.toLowerCase();
+                    const textB = b.text.toLowerCase();
+
+                    if (sortMode === 1) { // По возрастанию
+                        if (textA < textB) return -1;
+                        if (textA > textB) return 1;
+                        return 0;
+                    } else { // По убыванию
+                        if (textA > textB) return -1;
+                        if (textA < textB) return 1;
+                        return 0;
+                    }
+                });
+
+                return sortedTasks;
+            }
+
+            // Обновление интерфейса сортировки
+            function updateSortUI() {
+                const modes = [
+                    { icon: 'ri-close-large-fill', text: 'ВЫКЛ' },
+                    { icon: 'ri-sort-asc', text: 'ВКЛ' },
+                    { icon: 'ri-sort-desc', text: 'ВКЛ' }
+                ];
+
+                const mode = modes[sortMode];
+                sortIcon.className = mode.icon;
+                sortModeText.textContent = mode.text;
+
+                localStorage.setItem('noteSortMode', sortMode);
+            }
+
+            // Переключение режимов сортировки
+            function toggleSortMode() {
+                sortMode = (sortMode + 1) % 3;
+                updateSortUI();
+                renderTasks(); // Перерисовываем с новой сортировкой
+            }
+
+            // Обработчик для кнопки сортировки
+            if (sortToggleBtn) {
+                sortToggleBtn.addEventListener('click', toggleSortMode);
+            }
+
+            // Инициализация UI сортировки
+            updateSortUI();
+
             function loadTasks() {
                 const stored = localStorage.getItem('noteTasks');
                 if (stored) {
@@ -1827,12 +1947,19 @@
 
             function renderTasks() {
                 taskListEl.innerHTML = '';
+
+                // Получаем отсортированные задачи
+                const tasksToRender = applySortToTasks(tasks);
+
                 emptyPlaceholder.style.display = tasks.length === 0 ? 'block' : 'none';
 
-                tasks.forEach((task, index) => {
+                tasksToRender.forEach((task, sortedIndex) => {
+                    // Находим оригинальный индекс для операций редактирования/удаления
+                    const originalIndex = tasks.findIndex(t => t.text === task.text && t.description === task.description && t.completed === task.completed);
+
                     const li = document.createElement('li');
                     li.className = `task-item ${task.completed ? 'completed' : ''}`;
-                    li.dataset.index = index;
+                    li.dataset.index = originalIndex;
 
                     const mainRow = document.createElement('div');
                     mainRow.className = 'task-main-row';
@@ -1841,7 +1968,7 @@
                     checkbox.type = 'checkbox';
                     checkbox.className = 'task-check';
                     checkbox.checked = task.completed;
-                    checkbox.addEventListener('change', () => toggleCompleted(index));
+                    checkbox.addEventListener('change', () => toggleCompleted(originalIndex));
 
                     const textSpan = document.createElement('span');
                     textSpan.className = 'task-text';
@@ -1858,7 +1985,7 @@
                     editBtn.setAttribute('title', 'Редактировать задачу');
                     editBtn.addEventListener('click', (e) => {
                         e.stopPropagation();
-                        openEditModal(index);
+                        openEditModal(originalIndex);
                     });
 
                     const delBtn = document.createElement('button');
@@ -1866,7 +1993,7 @@
                     delBtn.innerHTML = '<i class="ri-close-line"></i>';
                     delBtn.setAttribute('aria-label', 'Удалить');
                     delBtn.setAttribute('title', 'Удалить задачу');
-                    delBtn.addEventListener('click', () => deleteTask(index));
+                    delBtn.addEventListener('click', () => deleteTask(originalIndex));
 
                     actionsDiv.appendChild(editBtn);
                     actionsDiv.appendChild(delBtn);
